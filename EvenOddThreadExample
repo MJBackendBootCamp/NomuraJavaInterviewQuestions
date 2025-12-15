@@ -1,0 +1,49 @@
+class PrintNumbers {
+    private int number = 1;
+    private final int MAX = 10;
+
+    public synchronized void printOdd() {
+        while (number <= MAX) {
+            if (number % 2 == 0) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("Odd Thread: " + number);
+                number++;
+                notify();
+            }
+        }
+    }
+
+    public synchronized void printEven() {
+        while (number <= MAX) {
+            if (number % 2 != 0) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("Even Thread: " + number);
+                number++;
+                notify();
+            }
+        }
+    }
+}
+
+public class EvenOddThreadExample {
+    public static void main(String[] args) {
+
+        PrintNumbers printNumbers = new PrintNumbers();
+
+        Thread oddThread = new Thread(() -> printNumbers.printOdd());
+        Thread evenThread = new Thread(() -> printNumbers.printEven());
+
+        oddThread.start();
+        evenThread.start();
+    }
+}
